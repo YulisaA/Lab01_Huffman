@@ -219,13 +219,7 @@ public class MainActivity2 extends AppCompatActivity {
         txtFileContent.setText(result);
     }
 
-    /*@OnClick(R.id.btnMComp)
-    public void onViewClicked1() {
-        Intent intent = new Intent(this, MainActivity3.class);
-        intent.putExtra("array", Lista);
 
-        startActivity(intent);
-    }*/
 }
 
 
