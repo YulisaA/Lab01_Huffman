@@ -164,7 +164,6 @@ public class MainActivity2 extends AppCompatActivity {
         String result = huffman.Decode(txtFileContent.getText().toString());
         WriteFile(nameFile, result);
         txtFileContent.setText(result);
-
     }
 }
 
