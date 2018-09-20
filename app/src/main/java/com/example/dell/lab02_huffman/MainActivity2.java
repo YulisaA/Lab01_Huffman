@@ -48,6 +48,7 @@ public class MainActivity2 extends AppCompatActivity {
     Huffman huffman = new Huffman();
     @BindView(R.id.btnDesc)
     Button btnDesc;
+    String filename = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +74,8 @@ public class MainActivity2 extends AppCompatActivity {
         if (requestCode == 123 && resultCode == RESULT_OK) {
             Uri selectedfile = data.getData();
 
+
+            filename = selectedfile.getLastPathSegment();
 
             Toast.makeText(this, selectedfile.getPath(), Toast.LENGTH_LONG).show();
             try {
@@ -124,7 +127,7 @@ public class MainActivity2 extends AppCompatActivity {
                 FileOutputStream fos = new FileOutputStream(f);
                 fos.write(content.getBytes());
                 fos.close();
-                Toast.makeText(this, "Archivo creado", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Archivo en: storage/MisCompresiones", Toast.LENGTH_LONG).show();
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -150,7 +153,9 @@ public class MainActivity2 extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @OnClick(R.id.btnComp)
     public void onViewClickedComp() {
-        String nameFile = "fileComp.huff";
+
+        String[]split = filename.split("\\.");
+        String nameFile = split[0] + ".huff";
 
         String result = huffman.Encode(txtFileContent.getText().toString());
         WriteFile(nameFile, result);
@@ -159,7 +164,10 @@ public class MainActivity2 extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.N)
     @OnClick(R.id.btnDesc)
     public void onViewClickedDesc() {
-        String nameFile = "fileDesc.txt";
+        String[]split = filename.split(".");
+
+
+        String nameFile = split[0] + ".desc";
 
         String result = huffman.Decode(txtFileContent.getText().toString());
         WriteFile(nameFile, result);
