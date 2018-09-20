@@ -37,6 +37,7 @@ public class Huffman {
     static String encoded = "";
     static String decoded = "";
     static int ASCII[] = new int[128];
+    static Integer size = 0;
 
     public static String Encode (String mytext)
     {
