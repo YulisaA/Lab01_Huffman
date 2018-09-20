@@ -211,8 +211,13 @@ public class MainActivity2 extends AppCompatActivity {
         nameVerify2 = nameFile;
         System.out.println(nameFile);
 
-        String result = huffman.Decode(txtFileContent.getText().toString());
+
         sizeComp = txtFileContent.getText().toString().getBytes().length;
+
+        String[] parts = txtFileContent.getText().toString().split(";");
+
+        String cod = parts[parts.length - 1];
+        String result = huffman.Decode(cod);
 
         System.out.println("size Comppp"+sizeComp);
         WriteFile(nameFile, result);

@@ -77,13 +77,13 @@ public class Huffman {
         return flag;
     }
 
-    private static String decodeTextf() {
+    private static String decodeText(String encode) {
         decoded = "";
         Node node = nodes.peek();
-        for (int i = 0; i < encoded.length(); ) {
+        for (int i = 0; i < encode.length(); ) {
             Node tmpNode = node;
-            while (tmpNode.left != null && tmpNode.right != null && i < encoded.length()) {
-                if (encoded.charAt(i) == '1')
+            while (tmpNode.left != null && tmpNode.right != null && i < encode.length()) {
+                if (encode.charAt(i) == '1')
                     tmpNode = tmpNode.right;
                 else tmpNode = tmpNode.left;
                 i++;
@@ -98,42 +98,11 @@ public class Huffman {
         System.out.println("Decoded Text: " + decoded);
         return decoded;
     }
-    private String decodeText(String Textdesc) {
-        decoded = "";
-        TreeMap<String, String> myCodes = new TreeMap<>();
-        String[] parts = Textdesc.split(";");
-
-        for (int i = 0; i < parts.length -1; i++){
-            String[] subparts = parts[i].split(":");
-            myCodes.put(subparts[1].trim(), subparts[0].trim());
-
-        }
-
-        String cod = parts[parts.length - 1];
-        StringBuilder sb = new StringBuilder();
-        String []aux = new String[(cod.length())/8];
-
-
-           int i = 0;
-                for(int k = 0; k < cod.length();  k+=8)
-                {
-                aux[i] = cod.substring(k, k+8);
-                i++;
-            }
-
-        System.out.println(aux[2]);
-
-        for(int j = 0; j < cod.length()/8; j++)
-        {
-            sb.append(myCodes.get(aux[j]));
-        }
-        return sb.toString();
-    }
 
     private static String encodeText() {
         encoded = "";
         for (int i = 0; i < text.length(); i++)
-            encoded += convert(codes.get(text.charAt(i)));
+            encoded += codes.get(text.charAt(i));
         System.out.println("Encoded Text: " + encoded);
 
         return encoded;
@@ -149,22 +118,10 @@ public class Huffman {
         System.out.println("--- Printing Codes ---");
         codes.forEach((k, v) -> System.out.println("'" + k + "' : " + v));
 
-
-        codes.forEach((k, v) -> stringBuilder.append(k +":" + convert(v) +";"+ "\n"));
+        codes.forEach((k, v) -> stringBuilder.append(k +":" + v +";"+ "\n"));
         return stringBuilder.toString();
     }
 
-    private static String convert(String k)
-    {
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(k);
-        for(int i = 0; sb.length() < 8; i++)
-        {
-            sb.append("0").toString();
-        }
-        return sb.toString();
-    }
 
     private static void calculateCharIntervals(PriorityQueue<Node> vector, boolean printIntervals) {
         if (printIntervals) System.out.println("-- intervals --");
