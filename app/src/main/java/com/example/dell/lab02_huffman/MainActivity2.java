@@ -164,7 +164,7 @@ public class MainActivity2 extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.N)
     @OnClick(R.id.btnDesc)
     public void onViewClickedDesc() {
-        String[]split = filename.split(".");
+        String[]split = filename.split("\\.");
 
 
         String nameFile = split[0] + ".desc";
