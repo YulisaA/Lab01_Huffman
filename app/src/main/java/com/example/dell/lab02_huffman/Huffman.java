@@ -29,14 +29,19 @@ public class Huffman {
         encoded = "";
         decoded = "";
         System.out.println("Text: " + text);
+
         String myCodes = calculateFrequencies(nodes);
         //Create tree with nodes on Queue
+
         buildTree(nodes);
         generateCodes(nodes.peek(), "");
+        printCodes();
+
 
         encodeText();
 
         //myCodes return the values with frequencies, and encodeText show the text in 0´s and 1´s
+
         return myCodes + encodeText();
     }
 
@@ -87,7 +92,9 @@ public class Huffman {
     }
 
 
+
     //insert characters and codes
+
     private static String encodeText() {
         encoded = "";
         for (int i = 0; i < text.length(); i++)
@@ -102,18 +109,22 @@ public class Huffman {
             mynodes.add(new Node(mynodes.poll(), mynodes.poll()));
     }
 
+
     private static String calculateFrequencies(PriorityQueue<Node> mynodes) {
+
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < text.length(); i++)
             ASCII[text.charAt(i)]++;
 
         for (int i = 0; i < ASCII.length; i++)
             if (ASCII[i] > 0) {
+
                 mynodes.add(new Node(ASCII[i] / (text.length() * 1.0), ((char) i) + ""));
                 System.out.println("'" + ((char) i) + "' : " + ASCII[i] / (text.length() * 1.0));
                 stringBuilder.append(((char) i) +":" + ASCII[i] / (text.length() * 1.0) +";"+ "\n");
             }
         return stringBuilder.toString();
+
     }
 
     //Generate prefix

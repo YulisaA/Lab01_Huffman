@@ -198,11 +198,13 @@ public class MainActivity2 extends AppCompatActivity {
             size = txtFileContent.getText().toString().getBytes().length;
             txtFileContent.setText("");
 
+
             WriteFile(nameFile, result);
         }
         catch (Exception e){
             Toast.makeText(this, "No se pudo comprimir.", Toast.LENGTH_LONG).show();
         }
+
 
 
     }
