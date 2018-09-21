@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.PriorityQueue;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -45,7 +46,6 @@ public class MainActivity2 extends AppCompatActivity {
     ImageButton btnExplorer;
     String text = "";
     String temp = "";
-
     Huffman huffman = new Huffman();
     @BindView(R.id.btnDesc)
     Button btnDesc;
@@ -53,18 +53,21 @@ public class MainActivity2 extends AppCompatActivity {
     String texto = "";
     String name = "";
     Integer size = 0;
+
+    //To show the properties files
     public ArrayList<String> Lista;
     public ArrayAdapter<String> adapter;
     Integer sizeComp = 0;
     @BindView(R.id.listview)
     ListView listview;
     String nameVerify;
-    String nameVerify2;
+    String nameVerifyTo;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
         ButterKnife.bind(this);
+
         Lista = new ArrayList<String>();
 
         adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.scheme, Lista);
@@ -135,14 +138,13 @@ public class MainActivity2 extends AppCompatActivity {
         if (isExternalStorage() && verifyPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             boolean exist = true;
             if (exist) {
-                File nuevaCarpeta;
-                nuevaCarpeta = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "/MisCompresiones");
-                nuevaCarpeta.mkdirs();
-                exist = false;
+                File newFile;
+                newFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "/MisCompresiones");
+                newFile.mkdirs();
             }
             File f;
             f = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/MisCompresiones", filename);
-            txtFileContent.setText(Environment.getExternalStorageDirectory().toString());
+
 
             try {
                 FileOutputStream fos = new FileOutputStream(f);
@@ -154,7 +156,7 @@ public class MainActivity2 extends AppCompatActivity {
                 e.printStackTrace();
 
             }
-            if(size != 0 && sizeComp != 0 && nameVerify2.contains(nameVerify))
+            if(size != 0 && sizeComp != 0 && nameVerifyTo.contains(nameVerify))
             {
                 Double Razon = (double) sizeComp / size;
                 Double Factor = (double) size / sizeComp;
@@ -186,43 +188,51 @@ public class MainActivity2 extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @OnClick(R.id.btnComp)
     public void onViewClickedComp() {
+        try{
+            //Filename with extension .huff
+            String[] split = filename.split("\\.");
+            String nameFile = split[0] + ".huff";
+            nameVerify = nameFile.replace(".huff", "");
 
-        String[] split = filename.split("\\.");
-        String nameFile = split[0] + ".txt";
-        nameVerify = nameFile.replace(".txt", "");
+            String result = huffman.Encode(txtFileContent.getText().toString());
+            size = txtFileContent.getText().toString().getBytes().length;
+            txtFileContent.setText("");
 
-        String result = huffman.Encode(txtFileContent.getText().toString());
-        size = txtFileContent.getText().toString().getBytes().length;
-        System.out.println("sizeeee" + size);
+            WriteFile(nameFile, result);
+        }
+        catch (Exception e){
+            Toast.makeText(this, "No se pudo comprimir.", Toast.LENGTH_LONG).show();
+        }
 
-        WriteFile(nameFile, result);
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @OnClick(R.id.btnDesc)
     public void onViewClickedDesc() {
-        String[] split = filename.split("\\.");
-        String[] split2 = split[0].split("/");
-        System.out.println(split[0]);
 
-        String nameFile = split2[1] + ".desc";
-        nameVerify2 = nameFile;
-        System.out.println(nameFile);
+        try{
+            String[] split = filename.split("\\.");
+            String[] split2 = split[0].split("/");
+            System.out.println(split[0]);
 
+            String nameFile = split2[1] + ".txt";
+            nameVerifyTo = nameFile;
+            System.out.println(nameFile);
 
-        sizeComp = txtFileContent.getText().toString().getBytes().length;
+            String[] parts = txtFileContent.getText().toString().split(";");
+            String cod = parts[parts.length - 1];
+            String result = huffman.Decode(cod, parts);
+            sizeComp = cod.getBytes().length;
 
-        String[] parts = txtFileContent.getText().toString().split(";");
+            WriteFile(nameFile, result);
+            txtFileContent.setText(result);
+        }
+        catch (Exception e){
+            Toast.makeText(this, "Elija un archivo .huff", Toast.LENGTH_LONG).show();
+        }
 
-        String cod = parts[parts.length - 1];
-        String result = huffman.Decode(cod);
-
-        System.out.println("size Comppp"+sizeComp);
-        WriteFile(nameFile, result);
-        txtFileContent.setText(result);
     }
-
-
 }
 
 
