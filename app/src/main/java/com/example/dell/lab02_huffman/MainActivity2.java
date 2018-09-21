@@ -188,8 +188,8 @@ public class MainActivity2 extends AppCompatActivity {
     public void onViewClickedComp() {
 
         String[] split = filename.split("\\.");
-        String nameFile = split[0] + ".huff";
-        nameVerify = nameFile.replace(".huff", "");
+        String nameFile = split[0] + ".txt";
+        nameVerify = nameFile.replace(".txt", "");
 
         String result = huffman.Encode(txtFileContent.getText().toString());
         size = txtFileContent.getText().toString().getBytes().length;
