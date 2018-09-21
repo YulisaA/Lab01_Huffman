@@ -65,7 +65,6 @@ public class MainActivity2 extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
         ButterKnife.bind(this);
-
         Lista = new ArrayList<String>();
 
         adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.scheme, Lista);
