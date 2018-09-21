@@ -8,7 +8,6 @@ import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.util.LogPrinter;
 import android.widget.Toast;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;

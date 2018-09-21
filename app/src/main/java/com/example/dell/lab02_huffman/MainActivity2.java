@@ -60,7 +60,6 @@ public class MainActivity2 extends AppCompatActivity {
     ListView listview;
     String nameVerify;
     String nameVerify2;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
