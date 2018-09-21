@@ -60,13 +60,11 @@ public class MainActivity2 extends AppCompatActivity {
     ListView listview;
     String nameVerify;
     String nameVerify2;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
         ButterKnife.bind(this);
-
         Lista = new ArrayList<String>();
 
         adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.scheme, Lista);

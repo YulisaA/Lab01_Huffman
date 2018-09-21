@@ -8,7 +8,6 @@ import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.util.LogPrinter;
 import android.widget.Toast;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
@@ -19,7 +18,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.PriorityQueue;
