@@ -1,25 +1,8 @@
 package com.example.dell.lab02_huffman;
 
 import android.annotation.TargetApi;
-import android.content.Context;
 import android.os.Build;
-import android.os.Environment;
-import android.support.annotation.RequiresApi;
-import android.util.Log;
-import android.util.LogPrinter;
-import android.widget.Toast;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-import java.security.AccessControlContext;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.io.File;
-import java.io.FileNotFoundException;
+
 import java.util.PriorityQueue;
 import java.util.Scanner;
 import java.util.TreeMap;
@@ -35,8 +18,6 @@ public class Huffman {
     static String encoded = "";
     static String decoded = "";
     static int ASCII[] = new int[128];
-    static Integer size = 0;
-
     public static String Encode (String mytext)
     {
         text = mytext;
@@ -48,36 +29,50 @@ public class Huffman {
         encoded = "";
         decoded = "";
         System.out.println("Text: " + text);
-        String myCodes = calculateCharIntervals(nodes, true);
+
+        String myCodes = calculateFrequencies(nodes);
+        //Create tree with nodes on Queue
+
         buildTree(nodes);
         generateCodes(nodes.peek(), "");
         printCodes();
 
-        System.out.println("-- Encoding/Decoding --");
+
         encodeText();
+
+        //myCodes return the values with frequencies, and encodeText show the text in 0´s and 1´s
 
         return myCodes + encodeText();
     }
-    public String Decode(String o) {
 
-        decodeText(o);
-        return decodeText(o);
+    //In order to decode, the tree is created with the frequencies and values received from file
+    public static String Decode(String o, String[] parts) {
+        ASCII = new int[128];
+        nodes.clear();
+        codes.clear();
+        encoded = "";
+        decoded = "";
+        utilities(parts, nodes);
+        buildTree(nodes);
+        generateCodes(nodes.peek(), "");
+        return decodeText(o.trim());
     }
 
-
-    private static boolean IsSameCharacterSet() {
-        boolean flag = true;
-        for (int i = 0; i < text.length(); i++)
-            if (ASCII[text.charAt(i)] == 0) {
-                flag = false;
-                break;
-            }
-        return flag;
+    public static void utilities(String[] parts, PriorityQueue<Node> justnodes )
+    {
+        for (int i = 0; i < parts.length -1; i++){
+            String[] subparts = parts[i].split(":");
+            justnodes.add(new Node(Double.parseDouble(subparts[1].trim()), subparts[0].trim()));
+            System.out.println( Double.parseDouble(subparts[1].trim()) + ":"+ subparts[0].trim());
+        }
     }
+
 
     private static String decodeText(String encode) {
         decoded = "";
         Node node = nodes.peek();
+
+        //verify nodes to find the prefix and get value
         for (int i = 0; i < encode.length(); ) {
             Node tmpNode = node;
             while (tmpNode.left != null && tmpNode.right != null && i < encode.length()) {
@@ -90,37 +85,15 @@ public class Huffman {
                 if (tmpNode.character.length() == 1)
                     decoded += tmpNode.character;
                 else
-                    System.out.println("Input not Valid");
-
+                    System.out.println("Error");
         }
-        System.out.println("Decoded Text: " + decoded);
+        System.out.println("Decoded: " + decoded);
         return decoded;
     }
 
-    private String decodeTextf(String Textdesc) {
-        decoded = "";
-        TreeMap<String, String> myCodes = new TreeMap<>();
-        String[] parts = Textdesc.split(";");
-        for (int i = 0; i < parts.length -1; i++){
-            String[] subparts = parts[i].split(":");
-            myCodes.put(subparts[1].trim(), subparts[0].trim());
-        }
-        String cod = parts[parts.length - 1];
-        StringBuilder sb = new StringBuilder();
-        String []aux = new String[(cod.length())/8];
-        int i = 0;
-        for(int k = 0; k < cod.length();  k+=8)
-        {
-            aux[i] = cod.substring(k, k+8);
-            i++;
-        }
-        System.out.println(aux[2]);
-        for(int j = 0; j < cod.length()/8; j++)
-        {
-            sb.append(myCodes.get(aux[j]));
-        }
-        return sb.toString();
-    }
+
+
+    //insert characters and codes
 
     private static String encodeText() {
         encoded = "";
@@ -131,33 +104,30 @@ public class Huffman {
         return encoded;
     }
 
-    private static void buildTree(PriorityQueue<Node> vector) {
-        while (vector.size() > 1)
-            vector.add(new Node(vector.poll(), vector.poll()));
+    private static void buildTree(PriorityQueue<Node> mynodes) {
+        while (mynodes.size() > 1)
+            mynodes.add(new Node(mynodes.poll(), mynodes.poll()));
     }
 
-    private static String calculateCharIntervals(PriorityQueue<Node> vector, boolean printIntervals) {
-        if (printIntervals) System.out.println("-- intervals --");
+
+    private static String calculateFrequencies(PriorityQueue<Node> mynodes) {
+
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < text.length(); i++)
             ASCII[text.charAt(i)]++;
 
         for (int i = 0; i < ASCII.length; i++)
             if (ASCII[i] > 0) {
-                vector.add(new Node(ASCII[i] / (text.length() * 1.0), ((char) i) + ""));
-                if (printIntervals)
-                    System.out.println("'" + ((char) i) + "' : " + ASCII[i] / (text.length() * 1.0));
-                    stringBuilder.append(((char) i) +":" + ASCII[i] / (text.length() * 1.0) +";"+ "\n");
+
+                mynodes.add(new Node(ASCII[i] / (text.length() * 1.0), ((char) i) + ""));
+                System.out.println("'" + ((char) i) + "' : " + ASCII[i] / (text.length() * 1.0));
+                stringBuilder.append(((char) i) +":" + ASCII[i] / (text.length() * 1.0) +";"+ "\n");
             }
         return stringBuilder.toString();
-    }
-    private static void printCodes() {
-        StringBuilder stringBuilder = new StringBuilder();
-        System.out.println("--- Printing Codes ---");
-        codes.forEach((k, v) -> System.out.println("'" + k + "' : " + v));
 
     }
 
+    //Generate prefix
     private static void generateCodes(Node node, String s) {
         if (node != null) {
             if (node.right != null)
@@ -170,11 +140,11 @@ public class Huffman {
             {
                 codes.put((node.character.charAt(0)), s);
             }
-
         }
     }
 }
 
+//Node class
 class Node {
     Node left, right;
     double value;
