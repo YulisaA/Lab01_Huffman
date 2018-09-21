@@ -26,10 +26,10 @@ import java.util.PriorityQueue;
 import java.util.Scanner;
 import java.util.TreeMap;
 
+import static java.lang.Math.round;
+
 @TargetApi(Build.VERSION_CODES.N)
 public class Huffman {
-
-    static final boolean newTextBasedOnOldOne = false;
 
     static PriorityQueue<Node> nodes = new PriorityQueue<>((o1, o2) -> (o1.value < o2.value) ? -1 : 1);
     static TreeMap<Character, String> codes = new TreeMap<>();
@@ -50,15 +50,15 @@ public class Huffman {
         encoded = "";
         decoded = "";
         System.out.println("Text: " + text);
-        calculateCharIntervals(nodes, true);
+        String myCodes = calculateCharIntervals(nodes, true);
         buildTree(nodes);
         generateCodes(nodes.peek(), "");
+        printCodes();
 
-        String tree = printCodes();
         System.out.println("-- Encoding/Decoding --");
         encodeText();
 
-        return printCodes() + encodeText();
+        return myCodes + encodeText();
     }
     public String Decode(String o) {
 
@@ -99,6 +99,31 @@ public class Huffman {
         return decoded;
     }
 
+    private String decodeTextf(String Textdesc) {
+        decoded = "";
+        TreeMap<String, String> myCodes = new TreeMap<>();
+        String[] parts = Textdesc.split(";");
+        for (int i = 0; i < parts.length -1; i++){
+            String[] subparts = parts[i].split(":");
+            myCodes.put(subparts[1].trim(), subparts[0].trim());
+        }
+        String cod = parts[parts.length - 1];
+        StringBuilder sb = new StringBuilder();
+        String []aux = new String[(cod.length())/8];
+        int i = 0;
+        for(int k = 0; k < cod.length();  k+=8)
+        {
+            aux[i] = cod.substring(k, k+8);
+            i++;
+        }
+        System.out.println(aux[2]);
+        for(int j = 0; j < cod.length()/8; j++)
+        {
+            sb.append(myCodes.get(aux[j]));
+        }
+        return sb.toString();
+    }
+
     private static String encodeText() {
         encoded = "";
         for (int i = 0; i < text.length(); i++)
@@ -113,19 +138,9 @@ public class Huffman {
             vector.add(new Node(vector.poll(), vector.poll()));
     }
 
-    private static String printCodes() {
-        StringBuilder stringBuilder = new StringBuilder();
-        System.out.println("--- Printing Codes ---");
-        codes.forEach((k, v) -> System.out.println("'" + k + "' : " + v));
-
-        codes.forEach((k, v) -> stringBuilder.append(k +":" + v +";"+ "\n"));
-        return stringBuilder.toString();
-    }
-
-
-    private static void calculateCharIntervals(PriorityQueue<Node> vector, boolean printIntervals) {
+    private static String calculateCharIntervals(PriorityQueue<Node> vector, boolean printIntervals) {
         if (printIntervals) System.out.println("-- intervals --");
-
+        StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < text.length(); i++)
             ASCII[text.charAt(i)]++;
 
@@ -134,7 +149,15 @@ public class Huffman {
                 vector.add(new Node(ASCII[i] / (text.length() * 1.0), ((char) i) + ""));
                 if (printIntervals)
                     System.out.println("'" + ((char) i) + "' : " + ASCII[i] / (text.length() * 1.0));
+                    stringBuilder.append(((char) i) +":" + ASCII[i] / (text.length() * 1.0) +";"+ "\n");
             }
+        return stringBuilder.toString();
+    }
+    private static void printCodes() {
+        StringBuilder stringBuilder = new StringBuilder();
+        System.out.println("--- Printing Codes ---");
+        codes.forEach((k, v) -> System.out.println("'" + k + "' : " + v));
+
     }
 
     private static void generateCodes(Node node, String s) {
