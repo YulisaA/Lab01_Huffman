@@ -45,6 +45,8 @@ public class MainActivity2 extends AppCompatActivity {
     ImageButton btnExplorer;
     String text = "";
     Huffman huffman = new Huffman();
+    LZW lzw = new LZW();
+
     @BindView(R.id.btnDesc)
     Button btnDesc;
     String filename = "";
@@ -210,7 +212,7 @@ public class MainActivity2 extends AppCompatActivity {
                 String[] split = filename.split("\\.");
                 String nameFile = split[0] + ".lzw";
 
-                String resultLZW = huffman.Encode(txtFileContent.getText().toString());
+                String resultLZW = lzw.compress(txtFileContent.getText().toString());
                 txtFileContent.setText("");
 
                 WriteFile(nameFile, resultLZW);
