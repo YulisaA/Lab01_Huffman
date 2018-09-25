@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.PriorityQueue;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -45,7 +44,6 @@ public class MainActivity2 extends AppCompatActivity {
     @BindView(R.id.btnExplorer)
     ImageButton btnExplorer;
     String text = "";
-    String temp = "";
     Huffman huffman = new Huffman();
     @BindView(R.id.btnDesc)
     Button btnDesc;
@@ -60,8 +58,8 @@ public class MainActivity2 extends AppCompatActivity {
     Integer sizeComp = 0;
     @BindView(R.id.listview)
     ListView listview;
-    String nameVerify;
-    String nameVerifyTo;
+    Integer receiveHuffmanOrLZW;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,6 +70,13 @@ public class MainActivity2 extends AppCompatActivity {
 
         adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.scheme, Lista);
         listview.setAdapter(adapter);
+
+        ReceiveData();
+    }
+
+    public void ReceiveData() {
+        Bundle extras = getIntent().getExtras();
+        receiveHuffmanOrLZW = extras.getInt("sendNumber");
     }
 
     @OnClick(R.id.btnExplorer)
@@ -88,7 +93,6 @@ public class MainActivity2 extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 123 && resultCode == RESULT_OK) {
             Uri selectedfile = data.getData();
-
 
             filename = selectedfile.getLastPathSegment();
 
@@ -156,7 +160,7 @@ public class MainActivity2 extends AppCompatActivity {
                 e.printStackTrace();
 
             }
-            if(size != 0 && sizeComp != 0 && nameVerifyTo.contains(nameVerify))
+            if(size != 0 && sizeComp != 0)
             {
                 Double Razon = (double) sizeComp / size;
                 Double Factor = (double) size / sizeComp;
@@ -189,22 +193,33 @@ public class MainActivity2 extends AppCompatActivity {
     @OnClick(R.id.btnComp)
     public void onViewClickedComp() {
         try{
-            //Filename with extension .huff
-            String[] split = filename.split("\\.");
-            String nameFile = split[0] + ".huff";
-            nameVerify = nameFile.replace(".huff", "");
+            if(receiveHuffmanOrLZW == 1 )
+            {
+                //Filename with extension .huff
+                String[] split = filename.split("\\.");
+                String nameFile = split[0] + ".huff";
 
-            String result = huffman.Encode(txtFileContent.getText().toString());
-            size = txtFileContent.getText().toString().getBytes().length;
-            txtFileContent.setText("");
+                String resultHuffman = huffman.Encode(txtFileContent.getText().toString());
+                txtFileContent.setText("");
 
-            WriteFile(nameFile, result);
+                WriteFile(nameFile, resultHuffman);
+            }
+
+            if(receiveHuffmanOrLZW == 2){
+                //Filename with extension .lzw
+                String[] split = filename.split("\\.");
+                String nameFile = split[0] + ".lzw";
+
+                String resultLZW = huffman.Encode(txtFileContent.getText().toString());
+                txtFileContent.setText("");
+
+                WriteFile(nameFile, resultLZW);
+            }
+
         }
         catch (Exception e){
             Toast.makeText(this, "No se pudo comprimir.", Toast.LENGTH_LONG).show();
         }
-
-
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -212,24 +227,53 @@ public class MainActivity2 extends AppCompatActivity {
     public void onViewClickedDesc() {
 
         try{
-            String[] split = filename.split("\\.");
-            String[] split2 = split[0].split("/");
-            System.out.println(split[0]);
+            if(receiveHuffmanOrLZW == 1)
+            {
+                String[] split = filename.split("\\.");
+                String[] split2 = split[0].split("/");
+                System.out.println(split[0]);
 
-            String nameFile = split2[1] + ".txt";
-            nameVerifyTo = nameFile;
-            System.out.println(nameFile);
+                String nameFile = split2[1] + ".txt";
+                System.out.println(nameFile);
 
-            String[] parts = txtFileContent.getText().toString().split(";");
-            String cod = parts[parts.length - 1];
-            String result = huffman.Decode(cod, parts);
-            sizeComp = cod.getBytes().length;
+                String[] parts = txtFileContent.getText().toString().split(";");
+                String cod = parts[parts.length - 1];
+                String resultHuffman = huffman.Decode(cod, parts);
+                sizeComp = cod.getBytes().length;
+                txtFileContent.setText(resultHuffman);
+                size = resultHuffman.getBytes().length;
 
-            WriteFile(nameFile, result);
-            txtFileContent.setText(result);
+                WriteFile(nameFile, resultHuffman);
+
+            }
+            if(receiveHuffmanOrLZW == 2)
+            {
+                String[] split = filename.split("\\.");
+                String[] split2 = split[0].split("/");
+                System.out.println(split[0]);
+
+                String nameFile = split2[1] + ".txt";
+                System.out.println(nameFile);
+
+                String[] parts = txtFileContent.getText().toString().split(";");
+                String cod = parts[parts.length - 1];
+                String resultLZW = huffman.Decode(cod, parts);
+                sizeComp = cod.getBytes().length;
+                txtFileContent.setText(resultLZW);
+                size = resultLZW.getBytes().length;
+
+                WriteFile(nameFile, resultLZW);
+            }
+
         }
-        catch (Exception e){
-            Toast.makeText(this, "Elija un archivo .huff", Toast.LENGTH_LONG).show();
+        catch (Exception e) {
+            if (receiveHuffmanOrLZW == 1)
+            {Toast.makeText(this, "Elija un archivo .huff", Toast.LENGTH_LONG).show();}
+            else{
+                Toast.makeText(this, "Elija un archivo .lzw", Toast.LENGTH_LONG).show();
+            }
+
+
         }
 
     }

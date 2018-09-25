@@ -13,6 +13,8 @@ public class MainActivity extends AppCompatActivity {
 
     @BindView(R.id.btnComp)
     Button btnComp;
+    @BindView(R.id.btnLZW)
+    Button btnLZW;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,8 +24,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @OnClick(R.id.btnComp)
-    public void onViewClicked() {
+    public void onViewClickedHuffman() {
         Intent intent = new Intent(this, MainActivity2.class);
+
+        //Send 1 when user chooses Huffman
+        intent.putExtra("sendNumber", 1);
+        startActivity(intent);
+    }
+
+    @OnClick(R.id.btnLZW)
+    public void onViewClickedLZW() {
+        Intent intent = new Intent(this, MainActivity2.class);
+        //Send 1 when user chooses Huffman
+        intent.putExtra("sendNumber", 2);
         startActivity(intent);
     }
 }

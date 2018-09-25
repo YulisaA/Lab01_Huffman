@@ -18,11 +18,22 @@
         android:layout_marginTop="40dp"
         android:editable="false"
         android:text="Comprimir (Huffman)"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/btnLZW"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.523"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.052" />
+        app:layout_constraintVertical_bias="0.46" />
+
+    <Button
+        android:id="@+id/btnLZW"
+        android:layout_width="163dp"
+        android:layout_height="61dp"
+        android:layout_marginBottom="236dp"
+        android:text="COMPRIMIR (LZW)"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
