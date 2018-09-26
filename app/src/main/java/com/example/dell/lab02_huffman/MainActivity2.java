@@ -28,6 +28,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -53,6 +56,8 @@ public class MainActivity2 extends AppCompatActivity {
     String texto = "";
     String name = "";
     Integer size = 0;
+    String path = "";
+    String actualContent = "";
 
     //To show the properties files
     public ArrayList<String> Lista;
@@ -95,13 +100,14 @@ public class MainActivity2 extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 123 && resultCode == RESULT_OK) {
             Uri selectedfile = data.getData();
-
             filename = selectedfile.getLastPathSegment();
 
             Toast.makeText(this, selectedfile.getPath(), Toast.LENGTH_LONG).show();
             try {
                 Read(selectedfile);
                 txtFileContent.setText(Read(selectedfile));
+                actualContent = Read(selectedfile);
+                System.out.println(actualContent);
 
             } catch (IOException e) {
                 Toast.makeText(this, "Error", Toast.LENGTH_LONG).show();
@@ -110,7 +116,9 @@ public class MainActivity2 extends AppCompatActivity {
             try {
 
                 texto = Read(selectedfile);
-                name = selectedfile.getPath();
+                String[] split = filename.split("\\.");
+                name = split[0] + ".lzw";
+                path = selectedfile.getPath();
             } catch (IOException e) {
                 Toast.makeText(this, "Error", Toast.LENGTH_LONG).show();
                 e.printStackTrace();
@@ -168,7 +176,7 @@ public class MainActivity2 extends AppCompatActivity {
                 Double Factor = (double) size / sizeComp;
                 Double Porcentaje = (double) (((size - sizeComp) / size) * 100);
                 String NombreCod = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/MisCompresiones" + filename;
-                String Aux = "Nombre Archivo :" + name + "\n" + "Path : " + NombreCod + " " + "\n" +"Razón de Compresión: " + Razon.toString() + "\n" + "Factor de Compresión:" + Factor.toString()
+                String Aux = "Nombre Archivo :" + name + "\n" + "Path : " + "storage/" + path + " " + "\n" +"Razón de Compresión: " + Razon.toString() + "\n" + "Factor de Compresión:" + Factor.toString()
                         + "\n" + "Porcentaje de Reducción: " + Porcentaje + "%";
                 Lista.add(Aux);
                 adapter.notifyDataSetChanged();
@@ -256,10 +264,21 @@ public class MainActivity2 extends AppCompatActivity {
 
                 String nameFile = split2[1] + ".txt";
                 System.out.println(nameFile);
+                Map<Integer,String> dictionary = new HashMap<Integer,String>();
+                List<Integer> numbersToDecompress = new ArrayList<Integer>();
 
                 String[] parts = txtFileContent.getText().toString().split(";");
+                System.out.println(actualContent);
+                lzw.stringToDictionary(dictionary, parts);
                 String cod = parts[parts.length - 1];
-                String resultLZW = huffman.Decode(cod, parts);
+                String[] numbersLZW = cod.trim().split(",");
+
+                for(int i = 0; i < numbersLZW.length; i++)
+                {
+                    numbersToDecompress.add(Integer.parseInt(numbersLZW[i].trim()));
+                }
+
+                String resultLZW = lzw.decompress(dictionary, numbersToDecompress);
                 sizeComp = cod.getBytes().length;
                 txtFileContent.setText(resultLZW);
                 size = resultLZW.getBytes().length;

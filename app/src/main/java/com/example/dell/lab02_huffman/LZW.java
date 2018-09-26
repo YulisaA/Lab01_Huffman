@@ -99,10 +99,47 @@ public class LZW {
 
         StringBuilder stringBuilder = new StringBuilder();
 
-        dictionary.forEach((k,v) -> stringBuilder.append(k +":" + v + ";"+ "\n"));
+        dictionary.forEach((k,v) -> stringBuilder.append(k +":" + v +  ";"  + "\n"));
 
         return stringBuilder.toString();
 
     }
 
+    public static void stringToDictionary(Map<Integer,String> dictionary, String[] parts)
+    {
+        for (int i = 0; i < parts.length -1; i++){
+            String[] subparts = parts[i].split(":");
+            dictionary.put(Integer.parseInt(subparts[1].trim()), subparts[0]);
+        }
+    }
+
+    //Decompress a .lzw file
+    public static String decompress(Map<Integer,String> dictionary, List<Integer> compressed) {
+        int dictionarySize = dictionary.size();
+
+        //Actual value of dictionary
+        String actual = dictionary.get(compressed.remove(0));
+
+        //This String will concatenate decompressed values
+        String result = actual;
+
+        for (int value : compressed) {
+            String entry;
+            if (dictionary.containsKey(value))
+            {
+                //Character received
+                entry = dictionary.get(value);
+            }
+            else
+            {
+                entry = actual + actual.charAt(0);
+            }
+
+            result += entry;
+
+            dictionary.put(1 + dictionarySize++, actual + entry.charAt(0));
+            actual = entry;
+        }
+        return result;
+    }
 }
