@@ -266,20 +266,42 @@ public class MainActivity2 extends AppCompatActivity {
                 System.out.println(nameFile);
                 Map<Integer,String> dictionary = new HashMap<Integer,String>();
                 List<Integer> numbersToDecompress = new ArrayList<Integer>();
-
-                String[] parts = txtFileContent.getText().toString().split(";");
-                System.out.println(actualContent);
-                lzw.stringToDictionary(dictionary, parts);
-                String cod = parts[parts.length - 1];
-                String[] numbersLZW = cod.trim().split(",");
-
-                for(int i = 0; i < numbersLZW.length; i++)
+                String filetext =  txtFileContent.getText().toString();
+                String text =  txtFileContent.getText().toString();
+                int i = 0;
+                int sizeDictionary = 0;
+                String comparator = text.substring(0, i+1);
+                //Obtain dictionary size
+                while(lzw.isInt(comparator))
                 {
-                    numbersToDecompress.add(Integer.parseInt(numbersLZW[i].trim()));
+                    sizeDictionary = Integer.parseInt(text.substring(0, i+1));
+                    filetext = filetext.replaceFirst(comparator.substring(i, i+1), "");
+                    i++;
+                    comparator = text.substring(0, i+1);
+
+                }
+                System.out.println(filetext);
+                for(int k = 0; k < sizeDictionary; k++)
+                {
+                    String actual = filetext.charAt(0)+"";
+                    String verifySpecialCharacters = filetext;
+                    filetext = filetext.replaceFirst(actual, "");
+                    if(filetext.equals(verifySpecialCharacters))
+                    {
+                        filetext = filetext.replaceFirst(lzw.auxiliarConcat(actual), "");
+                    }
+                    dictionary.put(k + 1, actual);
+                }
+                sizeComp = filetext.getBytes().length;
+
+                String[] numbersLZW = filetext.trim().split(",");
+
+                for(int j = 0; j < numbersLZW.length; j++)
+                {
+                    numbersToDecompress.add(Integer.parseInt(numbersLZW[j].trim()));
                 }
 
                 String resultLZW = lzw.decompress(dictionary, numbersToDecompress);
-                sizeComp = cod.getBytes().length;
                 txtFileContent.setText(resultLZW);
                 size = resultLZW.getBytes().length;
 

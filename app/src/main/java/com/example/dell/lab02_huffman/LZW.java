@@ -14,11 +14,12 @@ public class LZW {
         //Diccionary with text characters
         int size = 0;
         String previousCharacter = "";
-        Map<String,Integer> dictionary = new HashMap<String,Integer>();
+        Map<String,Integer> dictionary = new TreeMap<String,Integer>();
 
         //values no repeated
         initValues(dictionary, text);
         String dictionaryValues = dictionaryToString(dictionary);
+        int saveSize = dictionary.size();
         size = dictionary.size();
 
         List<String> result = new ArrayList<String>();
@@ -39,7 +40,7 @@ public class LZW {
 
         //List is converted to string, to write on file.lzw
         String joined = String.join(",", result);
-        return dictionaryValues + joined;
+        return saveSize + dictionaryValues + joined;
     }
 
     //This method insert the initial values of the text received to compress.
@@ -99,10 +100,8 @@ public class LZW {
 
         StringBuilder stringBuilder = new StringBuilder();
 
-        dictionary.forEach((k,v) -> stringBuilder.append(k +":" + v +  ";"  + "\n"));
-
+        dictionary.forEach((k,v) -> stringBuilder.append(k));
         return stringBuilder.toString();
-
     }
 
     public static void stringToDictionary(Map<Integer,String> dictionary, String[] parts)
@@ -141,5 +140,21 @@ public class LZW {
             actual = entry;
         }
         return result;
+    }
+    public static String auxiliarConcat(String a)
+    {
+        String result = "\\" + a;
+        return result;
+    }
+    public static Boolean isInt(String verify)
+    {
+        Boolean isint = false;
+        try {
+            Integer.parseInt(verify);
+            isint = true;
+        } catch (NumberFormatException excepcion) {
+            isint = false;
+        }
+        return isint;
     }
 }
