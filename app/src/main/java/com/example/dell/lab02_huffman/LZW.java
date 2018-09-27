@@ -40,7 +40,7 @@ public class LZW {
 
         //List is converted to string, to write on file.lzw
         String joined = String.join(",", result);
-        return saveSize + dictionaryValues + joined;
+        return saveSize + "|"+ dictionaryValues + joined;
     }
 
     //This method insert the initial values of the text received to compress.

@@ -212,7 +212,10 @@ public class MainActivity2 extends AppCompatActivity {
                 String resultHuffman = huffman.Encode(txtFileContent.getText().toString());
                 txtFileContent.setText("");
 
+                size = 0;
+                sizeComp = 0;
                 WriteFile(nameFile, resultHuffman);
+
             }
 
             if(receiveHuffmanOrLZW == 2){
@@ -223,7 +226,10 @@ public class MainActivity2 extends AppCompatActivity {
                 String resultLZW = lzw.compress(txtFileContent.getText().toString());
                 txtFileContent.setText("");
 
+                size = 0;
+                sizeComp = 0;
                 WriteFile(nameFile, resultLZW);
+
             }
 
         }
@@ -278,8 +284,8 @@ public class MainActivity2 extends AppCompatActivity {
                     filetext = filetext.replaceFirst(comparator.substring(i, i+1), "");
                     i++;
                     comparator = text.substring(0, i+1);
-
                 }
+                filetext = filetext.replaceFirst("\\|", "");
                 System.out.println(filetext);
                 for(int k = 0; k < sizeDictionary; k++)
                 {
